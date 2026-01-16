@@ -3,8 +3,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, String, Integer, DateTime
 from starlette.responses import JSONResponse, FileResponse
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import sessionmaker, Session ,declarative_base
 from datetime import datetime, timedelta,timezone
 from pydantic import BaseModel
 
