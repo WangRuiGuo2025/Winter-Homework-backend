@@ -117,8 +117,16 @@ async def login(username: str, password: str,db:Session=Depends(get_db)):
 
 @app.get("/register")
 async def register(username: str,password: str,db:Session=Depends(get_db)):
+    name=username.strip()
+    passwd=password.strip()
+
+    if not name:
+        return {"code": 0}
+    if not passwd:
+        return {"code": 0}
+
     try:
-        newuser = User(username=username,password=password)
+        newuser = User(username=name,password=passwd)
         db.add(newuser)
         db.commit()
         db.refresh(newuser)
@@ -221,13 +229,32 @@ async def unlike_article(like_req: LikeRequest, db: Session = Depends(get_db)):
         db.rollback()
         return {"code": 0}
 
+
 @app.get("/articles/check_like")
 async def check_like(article_id: int, username: str, db: Session = Depends(get_db)):
-    like = db.query(Like).filter(
-        Like.article_id == article_id,
-        Like.username == username
-    ).first()
-    return {"code": 1}
+    try:
+        like = db.query(Like).filter(
+            Like.article_id == article_id,
+            Like.username == username
+        ).first()
+        
+        if like:
+            return {
+                "code": 1,
+                "is_liked": True
+            }
+
+        else:
+            return {
+                "code": 1,
+                "is_liked": False
+            }
+    
+    except Exception as e:
+        return {
+            "code": 0,
+            "is_liked": False
+        }
 
 @app.post("/articles/comment")
 async def add_comment(comment_req: CommentRequest, db: Session = Depends(get_db)):
